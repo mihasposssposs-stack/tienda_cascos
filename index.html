@@ -127,7 +127,8 @@ async function enviarPedido() {
     const pedido = { nombre, direccion, email, telefono };
 
     try {
-        const respuesta = await fetch("https://tienda-cascos.onrender.com", {
+        const respuesta = await 
+fetch("/pedido", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(pedido)
