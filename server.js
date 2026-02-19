@@ -1,3 +1,12 @@
+const nodemailer = require("nodemailer");
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: "mihasposssposs@gmail.com",
+    pass: "ogvcvbvyciwjljga"
+  }
+});
+
 const express = require('express');
 const cors = require('cors');
 const fs = require('fs');
@@ -11,16 +20,32 @@ app.use(express.json());
 app.use(express.static(__dirname));
 
 // Endpoint para recibir pedidos
-app.post('/pedido', (req, res) => {
-    const pedido = req.body;
-    const linea = JSON.stringify(pedido) + '\n';
-    fs.appendFile('pedidos.txt', linea, (err) => {
-        if (err) {
-            console.error(err);
-            return res.status(500).json({ mensaje: 'Error guardando pedido' });
-        }
-        res.json({ mensaje: 'Pedido recibido correctamente' });
-    });
+app.post("/pedido", (req, res) => {
+  const { nombre, direccion, producto } = req.body;
+
+  const mensaje = `
+Nuevo pedido:
+
+Nombre: ${nombre}
+Dirección: ${direccion}
+Producto: ${producto}
+`;
+
+  const mailOptions = {
+    from: "mihasposssposs@gmail.com",
+    to: "mihasposssposs@gmail.com",
+    subject: "Nuevo pedido 🛒",
+    text: mensaje
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log(error);
+      res.status(500).send("Error al enviar email");
+    } else {
+      res.send("Pedido recibido correctamente");
+    }
+  });
 });
 
 // Servir index.html al abrir la raíz
