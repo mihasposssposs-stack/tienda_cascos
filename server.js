@@ -21,15 +21,18 @@ app.use(express.static(__dirname));
 
 // Endpoint para recibir pedidos
 app.post("/pedido", (req, res) => {
-  const { nombre, direccion, producto } = req.body;
+ const { nombre, direccion, email, telefono } = req.body;
 
-  const mensaje = `
+
+const mensaje = `
 Nuevo pedido:
 
 Nombre: ${nombre}
 Dirección: ${direccion}
-Producto: ${producto}
+Email: ${email}
+Teléfono: ${telefono}
 `;
+
 
   const mailOptions = {
     from: "mihasposssposs@gmail.com",
@@ -41,9 +44,11 @@ Producto: ${producto}
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       console.log(error);
-      res.status(500).send("Error al enviar email");
+     res.status(500).json({ mensaje: "Error al enviar email" });
+
     } else {
-      res.send("Pedido recibido correctamente");
+     res.json({ mensaje: "Pedido recibido correctamente" });
+
     }
   });
 });
